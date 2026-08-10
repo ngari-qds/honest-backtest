@@ -29,7 +29,7 @@ jobs:
         run: uv run mypy
 
       - name: Test
-        run: uv run pytest --cov --cov-report=term-missing --cov-report=xml
+        run: uv run pytest --cov --cov-report=term-missing --cov-fail-under=80
 
       # The full study runs on generated data with no network access, so CI can
       # execute it end to end. If the committed figures ever stop being

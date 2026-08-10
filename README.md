@@ -42,7 +42,8 @@ uv run python scripts/run_study.py
 
 No network access at any point. `fetch_data.py` generates the synthetic market from
 the seed in `config/study.yaml`; `run_study.py` regenerates every figure and table in
-`results/` in about 25 seconds. `uv run pytest` runs 56 tests.
+`results/` in about 25 seconds. `uv run pytest` runs 56 tests; CI enforces 80%
+line coverage.
 
 CI does more than lint and test: it runs the full study and then fails if `results/`
 has changed. The reproduction claim above is checked on every push rather than asserted.
@@ -62,8 +63,8 @@ signal = Signal.from_builder(momentum_builder(), market.closes, check_causality=
 honest = run(market, signal, cfg)
 naive = run(market, signal, cfg.with_realism(RealismConfig.naive()))
 
-print(honest.caveat())              # "SYNTHETIC DATA"
-print(naive.caveat())               # "... protections disabled: apply_costs, ..."
+print(honest.caveat())  # "SYNTHETIC DATA"
+print(naive.caveat())  # "... protections disabled: apply_costs, ..."
 print(honest.net_return.mean(), honest.turnover.mean())
 ```
 
