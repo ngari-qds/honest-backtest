@@ -45,7 +45,9 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM", "NPY", "RUF"]
 "tests/*" = ["E501"]
 
 [tool.mypy]
-python_version = "3.11"
+# python_version is deliberately NOT pinned: CI runs mypy on every version in
+# the matrix, and pinning it to 3.11 makes mypy reject 3.12-syntax stubs from
+# installed dependencies (numpy uses `type` statements) when running under 3.12.
 files = ["src", "tests"]
 ignore_missing_imports = true
 warn_redundant_casts = true
