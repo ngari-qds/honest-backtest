@@ -29,8 +29,7 @@ def _write(frame: pd.DataFrame, tables: Path, name: str) -> None:
     tables.mkdir(parents=True, exist_ok=True)
     # lineterminator is pinned so a Windows run and a Linux run produce
     # byte-identical files; CI asserts results/ is unchanged after a re-run.
-    frame.to_csv(tables / f"{name}.csv", lineterminator="
-")
+    frame.to_csv(tables / f"{name}.csv", lineterminator="\n")
     logger.info("wrote %s.csv", name)
 
 
