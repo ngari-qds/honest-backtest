@@ -1,0 +1,74 @@
+# Every parameter that affects a published number.
+#
+# The `realism` block is the point of this repository. Each flag disables one
+# specific piece of honesty, and all of them default to true. The README's
+# central comparison flips them all off at once via RealismConfig.naive(),
+# which is the only supported way to get the flattering answer.
+
+realism:
+  apply_costs: true
+  apply_borrow_costs: true
+  enforce_hard_to_borrow: true
+  apply_reporting_lag: true
+  respect_universe_membership: true
+  honour_delistings: true
+
+costs:
+  # Per side, in basis points of traded notional.
+  commission_bps: 1.0
+  half_spread_bps: 4.0
+  # Coefficient on sqrt(participation). At 10% participation this is ~3.2bp.
+  impact_coefficient: 10.0
+  max_participation_rate: 0.10
+  portfolio_notional: 100000000.0
+
+borrow:
+  default_annual_bps: 40.0
+  tier_annual_bps:
+    general_collateral: 30.0
+    warm: 150.0
+    hot: 800.0
+  trading_days_per_year: 252
+
+signal:
+  # Business days between the date a signal refers to and the date it could
+  # have been acted on.
+  reporting_lag_days: 1
+
+portfolio:
+  n_buckets: 5
+  weighting: equal
+  leg_gross: 1.0
+  max_weight_per_name: 0.05
+  min_names_per_side: 5
+
+execution:
+  rebalance: monthly
+  trade_on: next_open
+
+metrics:
+  trading_days_per_year: 252
+  drawdown_threshold: 0.05
+  capacity_erosion_fraction: 0.50
+
+synthetic:
+  # GENERATED market. Not real data. See src/honest_backtest/data/synthetic.py
+  # for the data-generating process; the planted effect is what lets the
+  # naive-versus-honest gap be checked against a known ground truth.
+  n_names: 400
+  start: "2010-01-04"
+  n_days: 3780
+  annual_drift: 0.06
+  annual_volatility: 0.28
+  planted_momentum_strength: 0.03
+  delisting_rate: 0.15
+  delisting_terminal_return: -0.30
+  hard_to_borrow_rate: 0.08
+
+output:
+  figures_dir: results/figures
+  tables_dir: results/tables
+  dpi: 150
+
+data_dir: data
+seed: 20260810
