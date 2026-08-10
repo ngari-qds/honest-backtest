@@ -7,7 +7,15 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # Two Python versions and two operating systems. The first CI run of
+    # this repository disagreed with my machine about floating point, which
+    # is exactly the class of problem a single-platform build hides.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.12']
     steps:
       - uses: actions/checkout@v4
 
@@ -15,9 +23,10 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          python-version: ${{ matrix.python-version }}
 
       - name: Sync environment
-        run: uv sync --frozen
+        run: uv sync
 
       - name: Lint
         run: uv run ruff check .
@@ -45,4 +54,5 @@ jobs:
       # otherwise would be a check that fails for a reason nobody cares about.
       # The numbers are the claim; the figures are drawn from the numbers.
       - name: Check the numbers are unchanged
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         run: git diff --exit-code -- results/tables results/run_manifest.json

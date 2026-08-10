@@ -1,5 +1,7 @@
 # honest-backtest
 
+[![ci](https://github.com/ngari-qds/honest-backtest/actions/workflows/ci.yml/badge.svg)](https://github.com/ngari-qds/honest-backtest/actions/workflows/ci.yml)
+
 A vectorized cross-sectional backtester that refuses to flatter the user.
 
 ![The same strategy, run naively and run honestly](results/figures/01_naive_vs_honest.png)
