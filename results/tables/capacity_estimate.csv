@@ -1,2 +1,2 @@
 ,assumed_notional,annualised_gross_return,annualised_impact_cost,impact_share_of_gross,erosion_fraction,estimated_capacity_notional,implied_scaling_multiple,mean_participation_rate,p99_participation_rate,max_participation_rate,share_of_trades_over_participation_cap,capacity_estimate_is_credible
-0,100000000.0,0.05252384552197096,0.0013712620899532263,0.026107419902825304,0.5,36678545068.22692,366.7854506822692,0.010333598120150129,0.1307523064726096,1.2101645982705622,0.0151463900477318,False
+0,100000000.0,0.05252384552,0.00137126209,0.0261074199,0.5,36678545070.0,366.7854507,0.01033359812,0.1307523065,1.210164598,0.01514639005,False

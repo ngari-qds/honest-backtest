@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import math
 import sys
 import time
 from pathlib import Path
@@ -25,11 +26,41 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(messag
 logger = logging.getLogger("run_study")
 
 
+#: Significant figures published in results/. Full float precision is not
+#: reproducible across platforms -- this machine and the Linux CI runner
+#: disagree in the 16th figure because of libm and summation order -- and CI
+#: fails if results/ changes. Ten figures is stable on both, and is far more
+#: precision than any number here is meaningful to.
+PUBLISHED_SIGNIFICANT_FIGURES = 10
+
+
+def _publishable(frame: pd.DataFrame) -> pd.DataFrame:
+    """Round every float to a fixed number of significant figures.
+
+    Applied elementwise rather than through to_csv's float_format, because
+    the summary tables mix strings and floats and therefore have object
+    dtype, which float_format silently skips.
+    """
+
+    def _round(value: object) -> object:
+        if isinstance(value, float) and math.isfinite(value):
+            return float(f"{value:.{PUBLISHED_SIGNIFICANT_FIGURES}g}")
+        return value
+
+    return frame.map(_round)
+
+
 def _write(frame: pd.DataFrame, tables: Path, name: str) -> None:
     tables.mkdir(parents=True, exist_ok=True)
     # lineterminator is pinned so a Windows run and a Linux run produce
     # byte-identical files; CI asserts results/ is unchanged after a re-run.
-    frame.to_csv(tables / f"{name}.csv", lineterminator="\n")
+    # float_format matters as much as lineterminator here. CI regenerates
+    # results/ and fails if it changed, but bit-identical floating point
+    # across platforms is not achievable: the Linux runner and this machine
+    # disagree in the 16th significant figure because of libm and summation
+    # order. Publishing 10 significant figures is stable on both, and is far
+    # more precision than any number here is meaningful to.
+    _publishable(frame).to_csv(tables / f"{name}.csv", lineterminator="\n")
     logger.info("wrote %s.csv", name)
 
 
@@ -116,8 +147,11 @@ def main(argv: list[str] | None = None) -> int:
         "n_days": len(market.dates),
         "start": str(market.dates.min().date()),
         "end": str(market.dates.max().date()),
-        "naive_sharpe": float(comparison.summary.loc["sharpe", "naive"]),
-        "honest_sharpe": float(comparison.summary.loc["sharpe", "honest"]),
+        # Rounded for the same reason the CSVs are: CI compares this file
+        # against the committed one, and full float precision disagrees
+        # between platforms in the last digit.
+        "naive_sharpe": round(float(comparison.summary.loc["sharpe", "naive"]), 10),
+        "honest_sharpe": round(float(comparison.summary.loc["sharpe", "honest"]), 10),
         "honest_caveat": comparison.honest.caveat(),
     }
     # Wall-clock time is deliberately NOT in the manifest. CI reruns the study
