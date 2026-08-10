@@ -1,0 +1,13 @@
+{
+  "seed": 20260810,
+  "is_synthetic": true,
+  "signal_causality_checked": true,
+  "n_names": 400,
+  "n_days": 3780,
+  "start": "2010-01-04",
+  "end": "2024-06-28",
+  "naive_sharpe": 1.277689307058855,
+  "honest_sharpe": 0.7731821306327408,
+  "honest_caveat": "SYNTHETIC DATA",
+  "elapsed_seconds": 26.84
+}
