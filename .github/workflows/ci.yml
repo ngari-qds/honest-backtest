@@ -39,5 +39,10 @@ jobs:
           uv run python scripts/fetch_data.py
           uv run python scripts/run_study.py
 
-      - name: Check results are unchanged
-        run: git diff --exit-code -- results/
+      # Tables and the manifest only. Figures are deliberately excluded: PNG
+      # output is not bit-identical across platforms because font rasterisation
+      # depends on the freetype and libpng versions present, and asserting
+      # otherwise would be a check that fails for a reason nobody cares about.
+      # The numbers are the claim; the figures are drawn from the numbers.
+      - name: Check the numbers are unchanged
+        run: git diff --exit-code -- results/tables results/run_manifest.json

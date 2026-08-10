@@ -45,8 +45,11 @@ the seed in `config/study.yaml`; `run_study.py` regenerates every figure and tab
 `results/` in about 25 seconds. `uv run pytest` runs 56 tests; CI enforces 80%
 line coverage.
 
-CI does more than lint and test: it runs the full study and then fails if `results/`
-has changed. The reproduction claim above is checked on every push rather than asserted.
+CI does more than lint and test: it runs the full study and fails if any published
+*number* changed. The reproduction claim above is checked on every push rather than
+asserted. Figures are excluded from that check — PNG output is not bit-identical
+across platforms because font rasterisation depends on the local freetype build, and
+the numbers are the claim anyway.
 
 ## The API, in full
 
