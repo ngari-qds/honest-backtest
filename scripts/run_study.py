@@ -117,8 +117,12 @@ def main(argv: list[str] | None = None) -> int:
         "naive_sharpe": float(comparison.summary.loc["sharpe", "naive"]),
         "honest_sharpe": float(comparison.summary.loc["sharpe", "honest"]),
         "honest_caveat": comparison.honest.caveat(),
-        "elapsed_seconds": round(time.time() - started, 2),
     }
+    # Wall-clock time is deliberately NOT in the manifest. CI reruns the study
+    # and fails if results/ changed, so anything that varies between two
+    # identical runs would turn that check into noise. Elapsed time is printed
+    # below instead, where it informs without being an artefact.
+    elapsed = round(time.time() - started, 2)
     (cfg.output.tables_dir.parent / "run_manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
@@ -132,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  {row:<22}{summary.loc[row, 'naive']:>12.3f}{summary.loc[row, 'honest']:>12.3f}")
     print()
     print(f"  honest run caveat : {comparison.honest.caveat()}")
-    print(f"  elapsed           : {manifest['elapsed_seconds']}s")
+    print(f"  elapsed           : {elapsed}s")
     return 0
 
 
